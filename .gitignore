@@ -8,5 +8,8 @@ coverage/
 !.env.example
 .convex/
 convex/_generated/
+convex/*.js
+convex/*.js.map
+convex/*.jsx
 .next/
 .vercel/
