@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+
+  --color-byl-purple: #4B0082; /* Deep Indigo / Purple */
+  --color-byl-dark: var(--text-primary); 
+  --color-byl-light: var(--bg-primary);
+  --color-byl-border: var(--border-primary);
+}
+
+@layer base {
+  :root {
+    --bg-primary: #FCFAF7;
+    --text-primary: #111111;
+    --border-primary: rgba(0, 0, 0, 0.1);
+  }
+
+  :root.dark {
+    --bg-primary: #111111;
+    --text-primary: #FCFAF7;
+    --border-primary: rgba(252, 250, 247, 0.1);
+  }
+
+  body {
+    @apply bg-byl-light text-byl-dark antialiased selection:bg-byl-purple selection:text-white transition-colors duration-300;
+  }
+
+  .prose {
+    --tw-prose-body: var(--text-primary);
+    --tw-prose-headings: var(--text-primary);
+    --tw-prose-lead: var(--text-primary);
+    --tw-prose-links: #4B0082;
+    --tw-prose-bold: var(--text-primary);
+    --tw-prose-counters: var(--text-primary);
+    --tw-prose-bullets: var(--text-primary);
+    --tw-prose-hr: var(--border-primary);
+    --tw-prose-quotes: var(--text-primary);
+    --tw-prose-quote-borders: var(--border-primary);
+    --tw-prose-captions: var(--text-primary);
+    --tw-prose-code: var(--text-primary);
+    --tw-prose-pre-code: var(--bg-primary);
+    --tw-prose-pre-bg: var(--text-primary);
+    --tw-prose-th-borders: var(--border-primary);
+    --tw-prose-td-borders: var(--border-primary);
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

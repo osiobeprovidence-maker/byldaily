@@ -1,0 +1,8 @@
+{
+  "name": "BYLDaily",
+  "description": "Beyond Your Labels Daily - A digital media platform focused on culture, entertainment, lifestyle, and news across Africa.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
