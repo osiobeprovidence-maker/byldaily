@@ -5,7 +5,7 @@ export default {
       applicationID: "convex",
     },
     {
-      domain: process.env.VITE_FIREBASE_AUTH_DOMAIN ?? "",
+      domain: process.env.FIREBASE_AUTH_DOMAIN ?? "",
       applicationID: "firebase",
     },
   ],
