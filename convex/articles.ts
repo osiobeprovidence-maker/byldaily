@@ -7,19 +7,20 @@ export const list = query({
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    let articles = ctx.db
+    const articles = await ctx.db
       .query("articles")
       .withIndex("by_published", (q) => q.eq("published", true))
-      .order("desc");
+      .order("desc")
+      .collect();
 
-    if (args.limit) {
-      articles = articles.take(args.limit);
-    }
-
-    const results = await articles.collect();
+    let results = articles;
 
     if (args.category) {
-      return results.filter((a) => a.category === args.category);
+      results = results.filter((a) => a.category === args.category);
+    }
+
+    if (args.limit) {
+      results = results.slice(0, args.limit);
     }
 
     return results;
