@@ -1,20 +1,91 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+<img width="1200" height="475" alt="GHBanner" src="https://images.unsplash.com/photo-1504711434969-e33886168d3c?w=1200&h=475&fit=crop" />
 </div>
 
-# Run and deploy your AI Studio app
+# BYLDaily — Beyond Your Labels Daily
 
-This contains everything you need to run your app locally.
+A digital media platform focused on culture, entertainment, lifestyle, and news across Africa.
 
-View your app in AI Studio: https://ai.studio/apps/df53783a-2cb0-472e-9d3d-f8ed8429b1a1
+## Tech Stack
 
-## Run Locally
+- **Frontend**: React 19 + TypeScript + Vite
+- **Styling**: Tailwind CSS v4
+- **Routing**: React Router v7
+- **Auth**: Firebase Authentication (Email/Password + Google)
+- **Backend**: Convex (schema, queries, mutations)
+- **Deployment**: Vercel
 
-**Prerequisites:**  Node.js
+## Getting Started
 
+```bash
+npm install
+npm run dev
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+The app runs on `http://localhost:3000`.
+
+## Firebase Setup
+
+1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
+2. Enable **Authentication** → **Sign-in method** → Enable **Email/Password** and **Google**
+3. Copy your Firebase config from Project Settings → General → Your apps → Web app
+4. Create `.env.local` in the project root:
+
+```env
+VITE_FIREBASE_API_KEY="your-api-key"
+VITE_FIREBASE_AUTH_DOMAIN="your-project.firebaseapp.com"
+VITE_FIREBASE_PROJECT_ID="your-project-id"
+VITE_FIREBASE_STORAGE_BUCKET="your-project.appspot.com"
+VITE_FIREBASE_MESSAGING_SENDER_ID="your-sender-id"
+VITE_FIREBASE_APP_ID="your-app-id"
+```
+
+## Convex
+
+This project uses Convex as its backend. To set up Convex locally:
+
+```bash
+npx convex dev
+```
+
+This will prompt you to create a Convex account and project, then generate the `convex/_generated/` files needed for type-safe queries.
+
+### Seed Data
+
+After setting up Convex, run the seed mutation to populate the database with sample data:
+
+```bash
+npx convex run convex/seed.ts:seed
+```
+
+### Admin Access
+
+To grant admin privileges to a user, run this in the Convex dashboard or via the CLI:
+
+```bash
+npx convex run --args '{email: "admin@example.com"}'
+```
+
+Then set the `admin` custom claim for that user in Firebase.
+
+## Deploy to Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+
+1. Push to GitHub
+2. Import the repo in Vercel
+3. Set the **Framework Preset** to **Vite**
+4. Add Firebase environment variables in Vercel's dashboard (see `.env.example`)
+5. Deploy!
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `VITE_FIREBASE_API_KEY` | Firebase API key |
+| `VITE_FIREBASE_AUTH_DOMAIN` | Firebase auth domain |
+| `VITE_FIREBASE_PROJECT_ID` | Firebase project ID |
+| `VITE_FIREBASE_STORAGE_BUCKET` | Firebase storage bucket |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID |
+| `VITE_FIREBASE_APP_ID` | Firebase app ID |
+| `VITE_CONVEX_URL` | Convex deployment URL (auto-configured) |

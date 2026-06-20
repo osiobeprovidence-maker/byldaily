@@ -1,31 +1,52 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, ArrowRight, Chrome, User, Lock } from 'lucide-react';
+import { Mail, ArrowRight, Chrome, User, Lock, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export function Register() {
   const navigate = useNavigate();
-  const { login } = useAuth(); // Using login to simulate auto-login after register
+  const { register, loginWithGoogle } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [showEmailForm, setShowEmailForm] = useState(false);
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
-    // Simulate registration
-    login(email, password);
-    navigate('/');
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await register(email, password, fullName);
+      navigate('/');
+    } catch (err: any) {
+      setError(err.message ?? 'Failed to create account');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleGoogleRegister = () => {
-    login();
-    navigate('/');
+  const handleGoogleRegister = async () => {
+    setError('');
+    try {
+      await loginWithGoogle();
+      navigate('/');
+    } catch (err: any) {
+      setError(err.message ?? 'Failed to sign up with Google');
+    }
   };
 
   return (
@@ -44,6 +65,13 @@ export function Register() {
         </div>
 
         <div className="bg-byl-light border border-byl-dark/10 p-8 md:p-10 shadow-2xl transition-colors duration-300">
+          {error && (
+            <div className="mb-6 flex items-start space-x-3 bg-red-50 border border-red-200 p-4 text-red-700 text-sm">
+              <AlertCircle size={18} className="shrink-0 mt-0.5" />
+              <span className="text-[11px] uppercase tracking-widest font-bold">{error}</span>
+            </div>
+          )}
+
           {!showEmailForm ? (
             <div className="space-y-4">
               {/* Social Login */}
@@ -133,9 +161,10 @@ export function Register() {
                 </div>
                 <button 
                   type="submit"
-                  className="w-full bg-byl-dark text-byl-light py-5 text-[11px] uppercase tracking-widest font-bold hover:bg-byl-purple transition-all flex items-center justify-center space-x-2"
+                  disabled={submitting}
+                  className="w-full bg-byl-dark text-byl-light py-5 text-[11px] uppercase tracking-widest font-bold hover:bg-byl-purple transition-all flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span>Create Account</span>
+                  <span>{submitting ? 'Creating account…' : 'Create Account'}</span>
                   <ArrowRight size={16} />
                 </button>
               </form>

@@ -1,24 +1,39 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, ArrowRight, Chrome } from 'lucide-react';
+import { Mail, ArrowRight, Chrome, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showEmailForm, setShowEmailForm] = useState(false);
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleEmailLogin = (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    login(email, password);
-    navigate('/');
+    setError('');
+    setSubmitting(true);
+    try {
+      await login(email, password);
+      navigate('/');
+    } catch (err: any) {
+      setError(err.message ?? 'Failed to sign in');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleGoogleLogin = () => {
-    login();
-    navigate('/');
+  const handleGoogleLogin = async () => {
+    setError('');
+    try {
+      await loginWithGoogle();
+      navigate('/');
+    } catch (err: any) {
+      setError(err.message ?? 'Failed to sign in with Google');
+    }
   };
 
   return (
@@ -37,6 +52,13 @@ export function Login() {
         </div>
 
         <div className="bg-byl-light border border-byl-dark/10 p-8 md:p-10 shadow-2xl transition-colors duration-300">
+          {error && (
+            <div className="mb-6 flex items-start space-x-3 bg-red-50 border border-red-200 p-4 text-red-700 text-sm">
+              <AlertCircle size={18} className="shrink-0 mt-0.5" />
+              <span className="text-[11px] uppercase tracking-widest font-bold">{error}</span>
+            </div>
+          )}
+
           {!showEmailForm ? (
             <div className="space-y-4">
               {/* Social Login */}
@@ -92,9 +114,10 @@ export function Login() {
                 </div>
                 <button 
                   type="submit"
-                  className="w-full bg-byl-dark text-byl-light py-5 text-[11px] uppercase tracking-widest font-bold hover:bg-byl-purple transition-all flex items-center justify-center space-x-2"
+                  disabled={submitting}
+                  className="w-full bg-byl-dark text-byl-light py-5 text-[11px] uppercase tracking-widest font-bold hover:bg-byl-purple transition-all flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span>Sign In</span>
+                  <span>{submitting ? 'Signing in…' : 'Sign In'}</span>
                   <ArrowRight size={16} />
                 </button>
               </form>
