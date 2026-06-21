@@ -8,6 +8,8 @@ import {
   updateProfile,
   type User as FirebaseUser,
 } from "firebase/auth";
+import { useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { auth, googleProvider } from "../lib/firebase";
 import type { User } from "../types";
 
@@ -42,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const syncUser = useMutation(api.users.upsertUser);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -49,13 +52,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (user) {
         const idTokenResult = await user.getIdTokenResult();
         setIsAdmin(!!idTokenResult.claims.admin);
+        syncUser({
+          firebaseUid: user.uid,
+          email: user.email ?? "",
+          name: user.displayName ?? "",
+          avatarUrl: user.photoURL ?? "",
+        });
       } else {
         setIsAdmin(false);
       }
       setIsLoading(false);
     });
     return unsubscribe;
-  }, []);
+  }, [syncUser]);
 
   const login = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);

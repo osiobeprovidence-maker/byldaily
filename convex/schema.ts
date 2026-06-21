@@ -13,9 +13,11 @@ export default defineSchema({
     following: v.number(),
     isAdmin: v.optional(v.boolean()),
     passwordHash: v.optional(v.string()),
+    firebaseUid: v.optional(v.string()),
   })
     .index("by_email", ["email"])
-    .index("by_username", ["username"]),
+    .index("by_username", ["username"])
+    .index("by_firebaseUid", ["firebaseUid"]),
 
   articles: defineTable({
     title: v.string(),
@@ -55,7 +57,7 @@ export default defineSchema({
     .index("by_date", ["date"]),
 
   forumPosts: defineTable({
-    authorId: v.id("users"),
+    authorId: v.string(),
     title: v.string(),
     content: v.string(),
     upvotes: v.number(),
@@ -66,7 +68,7 @@ export default defineSchema({
 
   forumComments: defineTable({
     postId: v.id("forumPosts"),
-    authorId: v.id("users"),
+    authorId: v.string(),
     content: v.string(),
     upvotes: v.number(),
   })

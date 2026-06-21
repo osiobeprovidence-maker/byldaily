@@ -32,7 +32,6 @@ export interface Event {
   category: EventCategory;
   imageUrl: string;
   description: string;
-  isRsvpd?: boolean;
 }
 
 export interface ForumPost {
@@ -40,9 +39,7 @@ export interface ForumPost {
   authorId: string;
   content: string;
   upvotes: number;
-  commentsCount: number;
   topic: ForumTopic;
-  timeAgo: string;
 }
 
 export interface ForumComment {
@@ -50,7 +47,6 @@ export interface ForumComment {
   postId: string;
   authorId: string;
   content: string;
-  timeAgo: string;
   upvotes: number;
 }
 

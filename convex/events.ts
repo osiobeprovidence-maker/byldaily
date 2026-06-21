@@ -12,6 +12,6 @@ export const list = query({
         .withIndex("by_category", (q) => q.eq("category", args.category!))
         .collect();
     }
-    return await ctx.db.query("events").collect();
+    return await ctx.db.query("events").order("desc").collect();
   },
 });

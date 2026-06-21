@@ -55,3 +55,16 @@ export const getTrending = query({
     return articles.filter((a) => a.trending);
   },
 });
+
+export const getRelated = query({
+  args: { category: v.string(), excludeId: v.id("articles") },
+  handler: async (ctx, args) => {
+    const articles = await ctx.db
+      .query("articles")
+      .withIndex("by_published", (q) => q.eq("published", true))
+      .collect();
+    return articles
+      .filter((a) => a.category === args.category && a._id !== args.excludeId)
+      .slice(0, 3);
+  },
+});

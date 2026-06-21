@@ -5,12 +5,13 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Footer } from './Footer';
 import { BackToTop } from './BackToTop';
+import { UserAvatar } from './UserAvatar';
 
 export function Layout() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isSearchOpen, setIsSearchOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
-  const { isAuthenticated, isAdmin, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -95,13 +96,11 @@ export function Layout() {
                   ) : (
                     <div className="flex items-center">
                       {isAuthenticated ? (
-                        <div className="w-8 h-8 rounded-full overflow-hidden border border-byl-dark/10 shadow-sm md:hover:border-byl-purple transition-colors">
-                          <img 
-                            src="https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?w=100&q=80" 
-                            alt="Menu" 
-                            className="w-full h-full object-cover grayscale md:hover:grayscale-0 transition-all duration-300"
-                          />
-                        </div>
+                        <UserAvatar
+                          user={user}
+                          className="w-8 h-8 rounded-full shadow-sm md:hover:border-byl-purple transition-colors"
+                          imageClassName="grayscale md:hover:grayscale-0 transition-all duration-300"
+                        />
                       ) : (
                         <div className="w-8 h-8 rounded-full bg-byl-dark/5 flex items-center justify-center text-byl-dark/40 border border-byl-dark/10">
                           <User size={18} />

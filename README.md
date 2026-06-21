@@ -75,7 +75,11 @@ Then set the `admin` custom claim for that user in Firebase.
 1. Push to GitHub
 2. Import the repo in Vercel
 3. Set the **Framework Preset** to **Vite**
-4. Add Firebase environment variables in Vercel's dashboard (see `.env.example`)
+4. Add Firebase environment variables in Vercel's dashboard for **Production**, **Preview**, and **Development** (see `.env.example`)
+   - Prefer the `VITE_FIREBASE_*` names below.
+   - If your Vercel project already has `FIREBASE_*` names without `VITE_`, the build maps those public web config values too.
+   - Existing `VITE_FIREBASE_AUTHDOMAIN`, `VITE_FIREBASE_STORAGEBUCKET`, and `VITE_FIREBASE_MESSAGINGSENDER_ID` variables are also supported for compatibility.
+   - After changing Vercel environment variables, redeploy. Existing builds keep the old values.
 5. Deploy!
 
 ## Environment Variables
