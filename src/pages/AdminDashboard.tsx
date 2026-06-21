@@ -58,7 +58,7 @@ export function AdminDashboard() {
         <main className="lg:w-3/4">
           {activeTab === 'Overview' && <OverviewTab />}
           {activeTab === 'Content' && <ContentTab articles={articles ?? []} users={users ?? []} />}
-          {activeTab === 'Users' && <UsersTab creators={creators ?? []} />}
+          {activeTab === 'Users' && <UsersTab creators={creators ?? []} users={users ?? []} />}
           {activeTab === 'Community' && <CommunityTab forumPosts={forumPosts ?? []} users={users ?? []} />}
           {activeTab === 'Settings' && <SettingsTab />}
         </main>
@@ -167,7 +167,7 @@ function ContentTab({ articles, users: _users }: { articles: any[]; users: any[]
   );
 }
 
-function UsersTab({ creators }: { creators: any[] }) {
+function UsersTab({ creators, users }: { creators: any[]; users: any[] }) {
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -176,12 +176,12 @@ function UsersTab({ creators }: { creators: any[] }) {
           <span className="text-[10px] uppercase font-bold tracking-widest text-byl-dark/40">Active Creators</span>
         </div>
         <div className="bg-byl-light border border-byl-dark/10 p-10 flex flex-col items-center">
-          <span className="text-3xl font-black font-serif text-byl-dark mb-1">12</span>
-          <span className="text-[10px] uppercase font-bold tracking-widest text-byl-dark/40">Pending Approval</span>
+          <span className="text-3xl font-black font-serif text-byl-dark mb-1">{users.length}</span>
+          <span className="text-[10px] uppercase font-bold tracking-widest text-byl-dark/40">Total Members</span>
         </div>
         <div className="bg-byl-light border border-byl-dark/10 p-10 flex flex-col items-center">
-          <span className="text-3xl font-black font-serif text-byl-dark mb-1">+140</span>
-          <span className="text-[10px] uppercase font-bold tracking-widest text-byl-dark/40">New This Week</span>
+          <span className="text-3xl font-black font-serif text-byl-dark mb-1">{creators.length > 0 ? `+${creators.length}` : '0'}</span>
+          <span className="text-[10px] uppercase font-bold tracking-widest text-byl-dark/40">Active Creators</span>
         </div>
       </div>
       <div className="bg-byl-light border border-byl-dark/10">
@@ -263,7 +263,7 @@ function SettingsTab() {
     linkedin: 'https://linkedin.com/company/byldaily',
     youtube: 'https://youtube.com/byldaily'
   });
-  const handleSave = (e: React.FormEvent) => { e.preventDefault(); console.log('Social links saved:', socialLinks); };
+  const handleSave = (e: React.FormEvent) => { e.preventDefault(); };
 
   return (
     <div className="space-y-12">
