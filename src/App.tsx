@@ -5,12 +5,18 @@ import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Articles } from './pages/Articles';
 import { ArticleDetail } from './pages/ArticleDetail';
+import { ArticleEditor } from './pages/ArticleEditor';
 import { CreatorHub } from './pages/CreatorHub';
+import { CreatorDetail } from './pages/CreatorDetail';
 import { About } from './pages/About';
 import { Forum } from './pages/Forum';
 import { NewDiscussion } from './pages/NewDiscussion';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { Events } from './pages/Events';
+import { EventDetail } from './pages/EventDetail';
+import { EventEditor } from './pages/EventEditor';
+import { Tickets } from './pages/Tickets';
+import { TicketDetail } from './pages/TicketDetail';
 import { Profile } from './pages/Profile';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -19,6 +25,7 @@ import { Contact } from './pages/Contact';
 import { Support } from './pages/Support';
 import { Legal } from './pages/Legal';
 import { Terms } from './pages/Terms';
+import { SearchResults } from './pages/SearchResults';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { useAuthForConvex } from './hooks/useAuthForConvex';
@@ -35,14 +42,24 @@ export default function App() {
               <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />
                 <Route path="articles" element={<Articles />} />
+                <Route path="articles/create" element={<ArticleEditor />} />
+                <Route path="articles/edit/:id" element={<ArticleEditor />} />
                 <Route path="articles/:id" element={<ArticleDetail />} />
                 <Route path="creators" element={<CreatorHub />} />
+                <Route path="creators/:id" element={<CreatorDetail />} />
                 <Route path="about" element={<About />} />
                 <Route path="spaces" element={<Forum />} />
                 <Route path="spaces/new" element={<NewDiscussion />} />
+                <Route path="spaces/:id" element={<Forum />} />
                 <Route path="admin" element={<AdminDashboard />} />
                 <Route path="live" element={<Events />} />
+                <Route path="events/:slug" element={<EventDetail />} />
+                <Route path="events/create" element={<EventEditor />} />
+                <Route path="events/edit/:id" element={<EventEditor />} />
+                <Route path="tickets" element={<Tickets />} />
+                <Route path="tickets/:ticketId" element={<TicketDetail />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="search" element={<SearchResults />} />
                 <Route path="login" element={<Login />} />
                 <Route path="register" element={<Register />} />
                 <Route path="privacy" element={<Privacy />} />

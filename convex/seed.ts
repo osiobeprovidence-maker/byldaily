@@ -1,7 +1,6 @@
-import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { internalMutation } from "./_generated/server";
 
-export const seed = mutation({
+export const seed = internalMutation({
   args: {},
   handler: async (ctx) => {
     const existing = await ctx.db.query("users").collect();
@@ -149,6 +148,8 @@ export const seed = mutation({
       category: "Music",
       imageUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800",
       description: "The biggest Afrobeat festival returns to Lagos for an unforgettable weekend of music and culture.",
+      hostId: adminId,
+      slug: "afronation-lagos-2026",
     });
 
     await ctx.db.insert("events", {
@@ -159,6 +160,8 @@ export const seed = mutation({
       category: "Culture",
       imageUrl: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800",
       description: "Showcasing the best of African fashion design and innovation.",
+      hostId: adminId,
+      slug: "lagos-fashion-week-2026",
     });
 
     await ctx.db.insert("events", {
@@ -169,6 +172,8 @@ export const seed = mutation({
       category: "Community",
       imageUrl: "https://images.unsplash.com/photo-1545389336-cf090694435e?w=800",
       description: "A weekend of yoga, meditation, and wellness workshops.",
+      hostId: adminId,
+      slug: "wellness-retreat-2026",
     });
 
     await ctx.db.insert("events", {
@@ -179,6 +184,8 @@ export const seed = mutation({
       category: "Online",
       imageUrl: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800",
       description: "Connecting innovators and investors shaping Africa's tech future.",
+      hostId: adminId,
+      slug: "african-tech-summit-2026",
     });
   },
 });

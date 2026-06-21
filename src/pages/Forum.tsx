@@ -24,19 +24,19 @@ function PostItem({ post, allComments, users, currentUserId, addComment }: PostI
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const upvotePost = useMutation(api.forum.upvotePost);
+  const toggleUpvote = useMutation(api.forum.toggleUpvote);
 
   const postComments = allComments.filter(c => c.postId === post._id);
-  const author = users.find((u: any) => u.firebaseUid === post.authorId);
+  const author = users.find((u: any) => u._id === post.authorId);
 
-  const handleLike = () => { upvotePost({ postId: post._id }); };
+  const handleLike = () => { toggleUpvote({ postId: post._id }); };
 
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim() || !currentUserId) return;
     setSubmitting(true);
     try {
-      await addComment({ postId: post._id, authorId: currentUserId, content: newComment });
+      await addComment({ postId: post._id, content: newComment });
       setNewComment('');
     } finally {
       setSubmitting(false);
@@ -84,7 +84,7 @@ function PostItem({ post, allComments, users, currentUserId, addComment }: PostI
 
           <div className="space-y-6 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
             {postComments.map((comment: any) => {
-              const commentAuthor = users.find((u: any) => u.firebaseUid === comment.authorId);
+              const commentAuthor = users.find((u: any) => u._id === comment.authorId);
               return (
                 <div key={comment._id} className="flex space-x-4">
                   <img src={commentAuthor?.avatarUrl} alt={commentAuthor?.name} className="w-8 h-8 rounded-full object-cover grayscale" />

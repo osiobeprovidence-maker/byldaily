@@ -1,18 +1,35 @@
-import React from 'react';
-import { useQuery } from "convex/react";
+import React, { useState } from 'react';
+import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { useAuth } from '../context/AuthContext';
 import { EventCategory } from '../types';
-import { Calendar, MapPin, Clock, ArrowRight, Star } from 'lucide-react';
+import { Calendar, MapPin, Clock, ArrowRight, Star, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Link } from 'react-router-dom';
 
 const CATEGORIES: (EventCategory | 'All')[] = ['All', 'Online', 'Physical', 'Music', 'Culture', 'Community'];
 
 export function Events() {
   const [activeCategory, setActiveCategory] = React.useState<EventCategory | 'All'>('All');
+  const { isAuthenticated } = useAuth();
   const events = useQuery(api.events.list, {});
+  const register = useMutation(api.events.register);
+  const [registering, setRegistering] = useState<string | null>(null);
 
   const filteredEvents = events ? (activeCategory === 'All' ? events : events.filter(e => e.category === activeCategory)) : [];
   const featuredEvent = events?.[0] ?? null;
+
+  const handleRegister = async (eventId: any) => {
+    if (!isAuthenticated) return;
+    setRegistering(eventId);
+    try {
+      await register({ eventId });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setRegistering(null);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16">
@@ -41,7 +58,10 @@ export function Events() {
               <div className="flex items-center text-[11px] uppercase tracking-widest font-bold opacity-80"><Calendar size={14} className="mr-3 text-byl-purple" />{featuredEvent.date}</div>
               <div className="flex items-center text-[11px] uppercase tracking-widest font-bold opacity-80"><MapPin size={14} className="mr-3 text-byl-purple" />{featuredEvent.location}</div>
             </div>
-            <button className="bg-byl-light text-byl-dark px-10 py-5 text-[11px] uppercase tracking-[0.2em] font-black hover:bg-byl-purple hover:text-byl-light transition-all flex items-center justify-between group/btn shadow-xl"><span>Discover Full Profile</span><ArrowRight size={16} className="group-hover/btn:translate-x-2 transition-transform" /></button>
+            <button onClick={() => handleRegister(featuredEvent._id)} disabled={registering === featuredEvent._id} className="bg-byl-light text-byl-dark px-10 py-5 text-[11px] uppercase tracking-[0.2em] font-black hover:bg-byl-purple hover:text-byl-light transition-all flex items-center justify-between group/btn shadow-xl disabled:opacity-50">
+              {registering === featuredEvent._id ? 'Registering…' : 'Reserve Placement'}
+              <ArrowRight size={16} className="group-hover/btn:translate-x-2 transition-transform" />
+            </button>
           </div>
           <div className="absolute top-0 right-0 p-10 opacity-5"><Star size={200} /></div>
         </motion.div>
@@ -59,7 +79,7 @@ export function Events() {
           </div>
           <div className="p-8 bg-byl-dark/5 border border-byl-dark/5 hidden md:block">
             <p className="text-[9px] uppercase tracking-widest font-black text-byl-dark/30 mb-4 leading-relaxed">Want to host an event under the BYL umbrella?</p>
-            <button className="text-[10px] uppercase tracking-widest font-black text-byl-purple hover:underline">Apply as Creator</button>
+            <Link to="/events/create" className="text-[10px] uppercase tracking-widest font-black text-byl-purple hover:underline">Create Event</Link>
           </div>
         </div>
 
@@ -71,6 +91,9 @@ export function Events() {
           ) : (
             <AnimatePresence mode="wait">
               <motion.div key={activeCategory} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                {filteredEvents.length === 0 && (
+                  <div className="col-span-full text-center py-20 text-byl-dark/40 font-medium">No events in this category.</div>
+                )}
                 {filteredEvents.map(event => (
                   <motion.div layout key={event._id} className="group flex flex-col bg-byl-light border border-byl-dark/10 hover:border-byl-dark transition-all duration-500 shadow-sm hover:shadow-2xl">
                     <div className="w-full h-64 md:h-72 overflow-hidden relative border-b border-byl-dark/10">
@@ -82,12 +105,14 @@ export function Events() {
                     <div className="p-8 md:p-10 flex flex-col flex-grow">
                       <div className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-byl-purple mb-4"><Clock size={12} /><span>Upcoming Event</span></div>
                       <h3 className="font-serif text-2xl md:text-3xl font-black text-byl-dark mb-6 group-hover:text-byl-purple transition-colors leading-tight">{event.title}</h3>
-                      <div className="space-y-3 mb-8 md:10 transition-colors">
+                      <div className="space-y-3 mb-8 md:10">
                         <div className="flex items-center text-[10px] uppercase tracking-widest font-black text-byl-dark/40 italic"><Calendar size={14} className="mr-3" />{event.date} &bull; {event.time}</div>
                         <div className="flex items-center text-[10px] uppercase tracking-widest font-black text-byl-dark/40 italic"><MapPin size={14} className="mr-3" />{event.location}</div>
                       </div>
                       <p className="text-byl-dark/60 text-sm mb-10 flex-grow font-medium leading-relaxed italic">"{event.description}"</p>
-                      <button className="w-full py-5 text-[11px] uppercase tracking-[0.2em] font-black transition-all shadow-lg bg-byl-dark text-byl-light hover:bg-byl-purple">Reserve Placement</button>
+                      <button onClick={() => handleRegister(event._id)} disabled={registering === event._id} className="w-full py-5 text-[11px] uppercase tracking-[0.2em] font-black transition-all shadow-lg bg-byl-dark text-byl-light hover:bg-byl-purple disabled:opacity-50">
+                        {registering === event._id ? 'Registering…' : 'Reserve Placement'}
+                      </button>
                     </div>
                   </motion.div>
                 ))}

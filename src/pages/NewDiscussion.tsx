@@ -13,23 +13,23 @@ const TOPICS: ForumTopic[] = [
 
 export function NewDiscussion() {
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const createPost = useMutation(api.forum.createPost);
   const [topic, setTopic] = useState<ForumTopic>('Culture Talk');
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  if (!isAuthenticated || !user) {
+  if (!isAuthenticated) {
     navigate('/login');
     return null;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim() || !user) return;
+    if (!content.trim()) return;
     setSubmitting(true);
     try {
-      await createPost({ authorId: user.id, title: topic, content, topic });
+      await createPost({ title: topic, content, topic });
       navigate('/spaces');
     } finally {
       setSubmitting(false);

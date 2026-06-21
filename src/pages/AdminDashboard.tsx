@@ -129,7 +129,7 @@ function ContentTab({ articles, users: _users }: { articles: any[]; users: any[]
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-byl-dark/30" />
           <input type="text" placeholder="Search stories..." className="w-full bg-byl-dark/5 border-none pl-12 pr-4 py-3 text-[11px] uppercase tracking-widest font-bold focus:ring-1 focus:ring-byl-purple transition-all outline-none" />
         </div>
-        <button className="bg-byl-dark text-byl-light px-6 py-3 text-[11px] uppercase tracking-widest font-bold flex items-center space-x-2 hover:bg-byl-purple transition-all shadow-lg"><Plus size={16} /><span>New Article</span></button>
+        <Link to="/articles/create" className="bg-byl-dark text-byl-light px-6 py-3 text-[11px] uppercase tracking-widest font-bold flex items-center space-x-2 hover:bg-byl-purple transition-all shadow-lg"><Plus size={16} /><span>New Article</span></Link>
       </div>
       <div className="bg-byl-light border border-byl-dark/10 overflow-hidden">
         <table className="w-full text-left">

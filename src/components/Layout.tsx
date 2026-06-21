@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Search, Menu, X, User } from 'lucide-react';
+import { Search, Menu, X, User, Bell, CheckCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Footer } from './Footer';
 import { BackToTop } from './BackToTop';
 import { UserAvatar } from './UserAvatar';
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 export function Layout() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+  const [isNotifOpen, setIsNotifOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
-  const { user, isAuthenticated, isAdmin, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, convexUserId, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const notifications = convexUserId ? useQuery(api.notifications.list, { userId: convexUserId as any }) : undefined;
+  const unreadCount = convexUserId ? useQuery(api.notifications.getUnreadCount, { userId: convexUserId as any }) : undefined;
+  const markRead = useMutation(api.notifications.markRead);
+  const markAllRead = useMutation(api.notifications.markAllRead);
 
   const handleLogout = () => {
     logout();
@@ -24,7 +32,7 @@ export function Layout() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/articles?q=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery('');
       setIsSearchOpen(false);
     }
@@ -33,6 +41,7 @@ export function Layout() {
   React.useEffect(() => {
     setIsMenuOpen(false);
     setIsSearchOpen(false);
+    setIsNotifOpen(false);
   }, [location.pathname]);
 
   return (
@@ -59,6 +68,43 @@ export function Layout() {
                   <Link to="/admin" className="text-[10px] uppercase tracking-widest font-black text-byl-purple hover:text-byl-dark transition-colors border-l border-byl-dark/10 pl-8 ml-2">Admin Dashboard</Link>
                 )}
               </div>
+
+              {/* Notifications */}
+              {isAuthenticated && (
+                <div className="relative">
+                  <button onClick={() => setIsNotifOpen(!isNotifOpen)} className="text-byl-dark hover:text-byl-purple transition-colors relative" aria-label="Notifications">
+                    <Bell size={20} />
+                    {unreadCount !== undefined && unreadCount > 0 && (
+                      <span className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 text-byl-light text-[8px] font-black flex items-center justify-center rounded-full">{unreadCount > 9 ? '9+' : unreadCount}</span>
+                    )}
+                  </button>
+
+                  {isNotifOpen && (
+                    <div className="absolute right-0 mt-4 w-80 max-h-96 overflow-y-auto bg-byl-light border border-byl-dark/10 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="flex items-center justify-between px-5 py-4 border-b border-byl-dark/5 sticky top-0 bg-byl-light z-10">
+                        <span className="text-[10px] uppercase font-black tracking-widest text-byl-dark">Notifications</span>
+                        {unreadCount !== undefined && unreadCount > 0 && (
+                          <button onClick={() => { if (convexUserId) markAllRead({ userId: convexUserId as any }); }} className="text-[9px] uppercase font-bold text-byl-purple hover:underline">
+                            <CheckCheck size={14} className="inline mr-1" />Mark All Read
+                          </button>
+                        )}
+                      </div>
+                      {!notifications || notifications.length === 0 ? (
+                        <p className="text-center text-[10px] uppercase tracking-widest font-bold text-byl-dark/30 py-10">No notifications yet</p>
+                      ) : (
+                        <div className="divide-y divide-byl-dark/5">
+                          {(notifications ?? []).slice(0, 20).map((n: any) => (
+                            <Link key={n._id} to={n.link || '#'} onClick={() => { if (!n.read) markRead({ id: n._id }); setIsNotifOpen(false); }} className={`block px-5 py-4 hover:bg-byl-dark/[0.02] transition-colors ${!n.read ? 'bg-byl-purple/[0.03] border-l-2 border-byl-purple' : ''}`}>
+                              <p className="text-[11px] font-bold text-byl-dark">{n.title}</p>
+                              <p className="text-[10px] text-byl-dark/50 mt-0.5">{n.body}</p>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Search */}
               <div className="relative flex items-center">

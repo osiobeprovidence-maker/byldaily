@@ -8,13 +8,14 @@ import {
   updateProfile,
   type User as FirebaseUser,
 } from "firebase/auth";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { auth, googleProvider } from "../lib/firebase";
 import type { User } from "../types";
 
 interface AuthContextType {
   user: User | null;
+  convexUserId: string | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
   isLoading: boolean;
@@ -45,6 +46,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const syncUser = useMutation(api.users.upsertUser);
+
+  const firebaseUid = firebaseUser?.uid ?? "";
+  const convexUserDoc = useQuery(api.users.getByFirebaseUid, firebaseUid ? { firebaseUid } : "skip");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -86,11 +90,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const user = firebaseUser ? mapFirebaseUser(firebaseUser) : null;
+  if (user && convexUserDoc) {
+    user.name = convexUserDoc.name || user.name;
+    user.username = convexUserDoc.username || user.username;
+    user.avatarUrl = convexUserDoc.avatarUrl || user.avatarUrl;
+    user.bio = convexUserDoc.bio || "";
+    user.interests = convexUserDoc.interests || [];
+    user.followers = convexUserDoc.followers || 0;
+    user.following = convexUserDoc.following || 0;
+    user.isAdmin = convexUserDoc.isAdmin || isAdmin;
+  }
+
   const isAuthenticated = !!firebaseUser;
+  const convexUserId = convexUserDoc?._id ?? null;
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, isAdmin, isLoading, login, register, loginWithGoogle, logout }}
+      value={{ user, convexUserId, isAuthenticated, isAdmin: user?.isAdmin ?? false, isLoading, login, register, loginWithGoogle, logout }}
     >
       {children}
     </AuthContext.Provider>
