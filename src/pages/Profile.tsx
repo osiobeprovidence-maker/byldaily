@@ -294,12 +294,12 @@ function SettingsEditor({ convexUserId }: { convexUserId: string | null }) {
     setError('');
     try {
       await updateProfile({
-        name: name || undefined,
-        username: username || undefined,
-        bio: bio || undefined,
-        avatarUrl: avatarUrl || undefined,
-        coverUrl: coverUrl || undefined,
-        website: website || undefined,
+        name,
+        username,
+        bio,
+        avatarUrl,
+        coverUrl,
+        website,
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
