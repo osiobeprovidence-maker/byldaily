@@ -212,6 +212,32 @@ export const follow = mutation({
   },
 });
 
+export const setAdmin = mutation({
+  args: { email: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const caller = await ctx.db
+      .query("users")
+      .withIndex("by_firebaseUid", (q) => q.eq("firebaseUid", identity.subject))
+      .unique();
+    if (!caller) throw new Error("User not found");
+
+    const admins = await ctx.db.query("users").collect();
+    const hasAdmin = admins.some((u) => u.isAdmin);
+    if (hasAdmin && !caller.isAdmin) throw new Error("Not authorized");
+
+    const target = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .unique();
+    if (!target) throw new Error("User not found");
+    await ctx.db.patch(target._id, { isAdmin: true });
+    return target._id;
+  },
+});
+
 export const unfollow = mutation({
   args: { followingId: v.id("users") },
   handler: async (ctx, args) => {
