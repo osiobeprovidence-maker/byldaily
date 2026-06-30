@@ -83,7 +83,7 @@ export function SearchResults() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {matchedUsers.slice(0, 10).map((u: any) => (
                 <Link key={u._id} to={`/creators/${u._id}`} className="flex items-center gap-4 p-4 bg-byl-light border border-byl-dark/10 hover:border-byl-dark transition-all group">
-                  <img src={u.avatarUrl || "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?w=100&q=80"} alt={u.name} className="w-12 h-12 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all" />
+                  <img src={u.avatarUrl} alt={u.name} className="w-12 h-12 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all" />
                   <div className="min-w-0">
                     <p className="font-bold text-sm truncate">{u.name}</p>
                     <p className="text-[10px] text-byl-dark/40 truncate">@{u.username}</p>

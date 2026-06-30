@@ -47,12 +47,25 @@ export const getFeatured = query({
 });
 
 export const getTrending = query({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db
+  args: { limit: v.optional(v.number()) },
+  handler: async (ctx, args) => {
+    const published = await ctx.db
       .query("articles")
-      .withIndex("by_published_trending", (q) => q.eq("published", true).eq("trending", true))
+      .withIndex("by_published", (q) => q.eq("published", true))
       .collect();
+
+    const withEngagement = await Promise.all(
+      published.map(async (article) => {
+        const likes = await ctx.db
+          .query("articleLikes")
+          .withIndex("by_article", (q) => q.eq("articleId", article._id))
+          .collect();
+        return { ...article, likeCount: likes.length };
+      })
+    );
+
+    withEngagement.sort((a, b) => b.likeCount - a.likeCount);
+    return args.limit ? withEngagement.slice(0, args.limit) : withEngagement;
   },
 });
 

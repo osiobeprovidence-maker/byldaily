@@ -67,7 +67,7 @@ export function Profile() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-12 md:py-16">
       <div className="bg-byl-light border border-byl-dark/10 p-8 md:p-12 mb-12 flex flex-col md:flex-row items-center md:items-start gap-8">
         <div className="shrink-0">
-          <img src={user.avatarUrl || "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?w=200&q=80"} alt={user.name} className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover grayscale" />
+          <img src={user.avatarUrl} alt={user.name} className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover grayscale" />
         </div>
         <div className="flex-grow text-center md:text-left">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">

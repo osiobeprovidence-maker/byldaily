@@ -49,7 +49,7 @@ export function CreatorDetail() {
     } catch (e) { console.error(e); }
   };
 
-  const avatarUrl = profile.avatarUrl || "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?w=200&q=80";
+  const avatarUrl = profile.avatarUrl;
   const displayName = profile.name || "BYLDaily Creator";
   const followersCount = profile.followers ?? 0;
   const bio = profile.bio || "A creator on BYLDaily.";

@@ -99,8 +99,8 @@ export function Articles() {
         </div>
       ) : (
         <div className="text-center py-20">
-          <h3 className="font-serif text-3xl font-bold text-byl-dark mb-4">No stories found</h3>
-          <p className="text-byl-dark/60 font-medium">Try adjusting your category or search query.</p>
+          <h3 className="font-serif text-3xl font-bold text-byl-dark mb-4">No stories published yet.</h3>
+          <p className="text-byl-dark/60 font-medium">Check back later for new stories.</p>
         </div>
       )}
     </div>

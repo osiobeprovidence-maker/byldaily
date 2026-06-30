@@ -11,11 +11,23 @@ const CATEGORIES: (EventCategory | 'All')[] = ['All', 'Online', 'Physical', 'Mus
 
 export function Events() {
   const [activeCategory, setActiveCategory] = React.useState<EventCategory | 'All'>('All');
-  const { isAuthenticated } = useAuth();
-  const events = useQuery(api.events.list, {});
+  const { isAuthenticated, convexUserId } = useAuth();
+  const myEvents = convexUserId ? useQuery(api.events.getMyEvents, { hostId: convexUserId as any }) : undefined;
+  const registeredEvents = convexUserId ? useQuery(api.events.getRegisteredEvents, { userId: convexUserId as any }) : undefined;
   const register = useMutation(api.events.register);
   const [registering, setRegistering] = useState<string | null>(null);
 
+  const allUserEvents: any[] = [];
+  if (myEvents) allUserEvents.push(...myEvents);
+  if (registeredEvents) {
+    registeredEvents.filter(Boolean).forEach((e: any) => {
+      if (!allUserEvents.some((ue: any) => ue._id === e._id)) {
+        allUserEvents.push(e);
+      }
+    });
+  }
+
+  const events = allUserEvents.length > 0 ? allUserEvents : undefined;
   const filteredEvents = events ? (activeCategory === 'All' ? events : events.filter(e => e.category === activeCategory)) : [];
   const featuredEvent = events?.[0] ?? null;
 
@@ -84,16 +96,23 @@ export function Events() {
         </div>
 
         <div className="flex-1 w-full">
-          {!events ? (
+          {!isAuthenticated ? (
+            <div className="text-center py-20 border border-byl-dark/10">
+              <p className="text-byl-dark/40 font-medium mb-4">No events yet.</p>
+              <Link to="/login" className="text-byl-purple underline text-sm">Sign in to view your events</Link>
+            </div>
+          ) : !events ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 animate-pulse">
               {[1,2].map(i => <div key={i} className="h-96 bg-byl-dark/5" />)}
+            </div>
+          ) : filteredEvents.length === 0 ? (
+            <div className="text-center py-20 border border-byl-dark/10">
+              <p className="text-byl-dark/40 font-medium">No events yet.</p>
+              <Link to="/events/create" className="text-byl-purple underline text-sm mt-2 inline-block">Create your first event</Link>
             </div>
           ) : (
             <AnimatePresence mode="wait">
               <motion.div key={activeCategory} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                {filteredEvents.length === 0 && (
-                  <div className="col-span-full text-center py-20 text-byl-dark/40 font-medium">No events in this category.</div>
-                )}
                 {filteredEvents.map(event => (
                   <motion.div layout key={event._id} className="group flex flex-col bg-byl-light border border-byl-dark/10 hover:border-byl-dark transition-all duration-500 shadow-sm hover:shadow-2xl">
                     <div className="w-full h-64 md:h-72 overflow-hidden relative border-b border-byl-dark/10">

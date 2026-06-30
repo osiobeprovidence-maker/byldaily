@@ -52,11 +52,7 @@ This will prompt you to create a Convex account and project, then generate the `
 
 ### Seed Data
 
-After setting up Convex, run the seed mutation to populate the database with sample data:
 
-```bash
-npx convex run convex/seed.ts:seed
-```
 
 ### Admin Access
 

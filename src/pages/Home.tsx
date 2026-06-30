@@ -81,13 +81,14 @@ export function Home() {
   const users = useQuery(api.users.getAll, {}) as Author[] | undefined;
   const creators = useQuery(api.creators.list);
   const events = useQuery(api.events.list, {});
+  const trendingArticles = useQuery(api.articles.getTrending, { limit: 6 });
 
   const authorMap = useMemo(() => new Map((users ?? []).map(u => [u._id, u])), [users]);
 
   const hero = articles?.find(a => a.featured) ?? articles?.[0] ?? null;
   const rest = articles?.filter(a => a._id !== hero?._id) ?? [];
 
-  const trending = (articles?.filter(a => a.trending && a._id !== hero?._id) ?? rest).slice(0, 6);
+  const trending = (trendingArticles?.filter(a => a._id !== hero?._id) ?? []).slice(0, 6);
   const editorPicks = (articles?.filter(a => a.featured && a._id !== hero?._id) ?? rest).slice(0, 4);
   const latest = rest.slice(0, latestCount);
   const hasMore = latestCount < rest.length;
